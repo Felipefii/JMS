@@ -4,7 +4,7 @@ import javax.jms.*;
 import javax.naming.InitialContext;
 import java.util.Scanner;
 
-public class Consumer {
+public class ConsumerTopicStock {
 
     @SuppressWarnings("resourse")
     public static void main(String[] args) throws Exception {
@@ -14,12 +14,13 @@ public class Consumer {
 
         ConnectionFactory factory = (ConnectionFactory)context.lookup("ConnectionFactory");
         Connection connection = factory.createConnection();
-
+        connection.setClientID("stock");
         connection.start();
 
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-        Destination queue = (Destination) context.lookup("financeiro");
-        MessageConsumer consumer = session.createConsumer(queue);
+        Topic topic = (Topic) context.lookup("loja");
+        MessageConsumer consumer = session.createDurableSubscriber(topic, "assign");
+
 
         consumer.setMessageListener(new MessageListener(){
 
