@@ -23,6 +23,7 @@ public class ProducerTopic {
 
 
         Message message = session.createTextMessage("<pessoa><id>"+ 122 +"</id></pessoa>");
+        message.setBooleanProperty("e-book", true);
         producer.send(message);
 
 
