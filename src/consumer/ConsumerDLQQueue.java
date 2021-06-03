@@ -1,12 +1,10 @@
 package consumer;
 
-import br.com.caelum.modelo.Pedido;
-
 import javax.jms.*;
 import javax.naming.InitialContext;
 import java.util.Scanner;
 
-public class ConsumerTopicStockSelector {
+public class ConsumerDLQQueue {
 
     @SuppressWarnings("resourse")
     public static void main(String[] args) throws Exception {
@@ -16,25 +14,18 @@ public class ConsumerTopicStockSelector {
 
         ConnectionFactory factory = (ConnectionFactory)context.lookup("ConnectionFactory");
         Connection connection = factory.createConnection();
-        connection.setClientID("stock");
+
         connection.start();
 
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-        Topic topic = (Topic) context.lookup("loja");
-        MessageConsumer consumer = session.createDurableSubscriber(topic, "assign", "e-book is null OR e-book=false", false);
-
+        Destination queue = (Destination) context.lookup("DLQ");
+        MessageConsumer consumer = session.createConsumer(queue);
 
         consumer.setMessageListener(new MessageListener(){
 
             @Override
             public void onMessage(Message message){
-                ObjectMessage objectMessage  = (ObjectMessage) message;
-                try{
-                    Pedido pedido = (Pedido) objectMessage.getObject();
-                    System.out.println(pedido.getCodigo());
-                } catch(JMSException e){
-                    e.printStackTrace();
-                }
+                System.out.println(message);
             }
 
         });

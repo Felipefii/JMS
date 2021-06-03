@@ -1,5 +1,8 @@
 package consumer;
 
+import br.com.caelum.modelo.Pedido;
+import br.com.caelum.modelo.PedidoFactory;
+
 import javax.jms.*;
 import javax.naming.InitialContext;
 
@@ -21,8 +24,9 @@ public class ProducerTopic {
         Destination topic = (Destination) context.lookup("loja");
         MessageProducer producer = session.createProducer(topic);
 
-
-        Message message = session.createTextMessage("<pessoa><id>"+ 122 +"</id></pessoa>");
+        Pedido pedido = new PedidoFactory().geraPedidoComValores();
+        
+        Message message = session.createObjectMessage(pedido);
         message.setBooleanProperty("e-book", true);
         producer.send(message);
 
