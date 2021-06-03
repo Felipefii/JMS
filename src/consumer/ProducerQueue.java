@@ -21,10 +21,10 @@ public class ProducerQueue {
         Destination queue = (Destination) context.lookup("financeiro");
         MessageProducer producer = session.createProducer(queue);
 
-        for (int i = 0; i < 1000; i++){
-            Message message = session.createTextMessage("<pessoa><id>"+ i +"</id></pessoa>");
-            producer.send(message);
-        }
+
+        Message message = session.createTextMessage("<pessoa><id>12</id></pessoa>");
+        producer.send(message);
+
 
         session.close();
         connection.close();

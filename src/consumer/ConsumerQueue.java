@@ -17,7 +17,16 @@ public class ConsumerQueue {
 
         connection.start();
 
-        Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+        // --- It needs to be true to works in transaction way
+        Session session = connection.createSession(true, Session.SESSION_TRANSACTED);
+        /*
+        ------ It works with client confirmation
+        Session session = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);
+
+        ------ Client works with duplications
+        Session session = connection.createSession(true, Session.DUPS_OK_ACKNOWLEDGE);
+        */
+
         Destination queue = (Destination) context.lookup("financeiro");
         MessageConsumer consumer = session.createConsumer(queue);
 
@@ -27,7 +36,9 @@ public class ConsumerQueue {
             public void onMessage(Message message){
                 TextMessage textMessage  = (TextMessage)message;
                 try{
+                    //message.acknowledge();
                     System.out.println(textMessage.getText());
+                    session.commit();
                 } catch(JMSException e){
                     e.printStackTrace();
                 }
